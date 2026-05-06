@@ -1,0 +1,22 @@
+# Rust build output
+/target/
+
+# Local Cargo config or alternate build dirs
+.cargo/config.toml
+/.cargo/
+
+# Editor and IDE state
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS metadata
+.DS_Store
+Thumbs.db
+
+# Logs and temporary files
+*.log
+*.tmp
+*.bak
