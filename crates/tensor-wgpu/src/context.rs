@@ -1,14 +1,30 @@
+//! WGPU context setup and synchronization.
+//!
+//! A context selects a GPU adapter, creates a device and queue, and provides the
+//! objects needed by tensor operations to create buffers and submit work.
+
 use anyhow::{Context, Result, bail};
 
+use crate::kernels::KernelCache;
+
+/// Owns the WGPU objects needed to submit compute work to one GPU adapter.
 pub struct GpuContext {
+    /// The top-level WGPU object used to discover adapters.
     pub instance: wgpu::Instance,
+    /// The selected physical or logical GPU adapter.
     pub adapter: wgpu::Adapter,
+    /// Human-readable details about the selected adapter.
     pub adapter_info: wgpu::AdapterInfo,
+    /// The logical device used to create buffers, shaders, and pipelines.
     pub device: wgpu::Device,
+    /// The queue used to submit encoded GPU commands.
     pub queue: wgpu::Queue,
+    /// Reusable compute pipelines and bind layouts for tensor kernels.
+    pub(crate) kernels: KernelCache,
 }
 
 impl GpuContext {
+    /// Creates a high-performance GPU context and rejects CPU/software adapters.
     pub async fn new() -> Result<Self> {
         let instance_descriptor = wgpu::InstanceDescriptor::new_without_display_handle_from_env();
         let requested_backends = instance_descriptor.backends;
@@ -44,6 +60,7 @@ impl GpuContext {
             })
             .await
             .context("failed to create wgpu device and queue")?;
+        let kernels = KernelCache::new(&device);
 
         Ok(Self {
             instance,
@@ -51,10 +68,23 @@ impl GpuContext {
             adapter_info,
             device,
             queue,
+            kernels,
         })
+    }
+
+    /// Blocks until previously submitted GPU work has finished.
+    ///
+    /// This is mainly useful for benchmarks and explicit synchronization points.
+    pub fn wait_idle(&self) -> Result<()> {
+        self.device
+            .poll(wgpu::PollType::wait_indefinitely())
+            .context("failed while waiting for GPU work to finish")?;
+
+        Ok(())
     }
 }
 
+/// Builds a short report of adapters visible to WGPU.
 async fn describe_adapters(instance: &wgpu::Instance, backends: wgpu::Backends) -> String {
     let adapters = instance.enumerate_adapters(backends).await;
 

@@ -3,13 +3,32 @@ name = "rust_gpu"
 version = "0.1.0"
 edition = "2024"
 
-[dependencies]
+[workspace]
+members = [
+    "crates/tensor-core",
+    "crates/tensor-cpu",
+    "crates/tensor-wgpu",
+]
+
+[workspace.dependencies]
 anyhow = "1.0.102"
 bytemuck = "1.25.0"
+criterion = "0.8.2"
 env_logger = "0.11.10"
 log = "0.4.29"
 pollster = "0.4.0"
 wgpu = "29.0.3"
 
+[dependencies]
+anyhow.workspace = true
+env_logger.workspace = true
+pollster.workspace = true
+tensor-cpu = { path = "crates/tensor-cpu" }
+tensor-wgpu = { path = "crates/tensor-wgpu" }
+
 [dev-dependencies]
-criterion = "0.8.2"
+criterion.workspace = true
+
+[[bench]]
+name = "ops"
+harness = false

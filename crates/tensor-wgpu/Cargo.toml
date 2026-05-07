@@ -1,0 +1,11 @@
+[package]
+name = "tensor-wgpu"
+version = "0.1.0"
+edition = "2024"
+
+[dependencies]
+anyhow.workspace = true
+bytemuck.workspace = true
+pollster.workspace = true
+tensor-core = { path = "../tensor-core" }
+wgpu.workspace = true

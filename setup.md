@@ -207,3 +207,9 @@ cargo install cargo-deny
 4. rustfmt and clippy are installed
 5. wgpu dependencies are added once implementation starts
 ```
+
+## Run nvidia-smi
+
+```bash
+nvidia-smi --query-gpu=index,name,utilization.gpu,utilization.memory,memory.used,memory.total,temperature.gpu --format=csv -l 2
+```

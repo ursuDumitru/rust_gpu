@@ -1064,12 +1064,11 @@ name = "rust_gpu"
 version = "0.1.0"
 dependencies = [
  "anyhow",
- "bytemuck",
  "criterion",
  "env_logger",
- "log",
  "pollster",
- "wgpu",
+ "tensor-cpu",
+ "tensor-wgpu",
 ]
 
 [[package]]
@@ -1193,6 +1192,32 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-ident",
+]
+
+[[package]]
+name = "tensor-core"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+]
+
+[[package]]
+name = "tensor-cpu"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "tensor-core",
+]
+
+[[package]]
+name = "tensor-wgpu"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "bytemuck",
+ "pollster",
+ "tensor-core",
+ "wgpu",
 ]
 
 [[package]]
