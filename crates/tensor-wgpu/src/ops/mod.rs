@@ -6,5 +6,8 @@ mod matmul;
 mod relu;
 
 pub use add::{gpu_add, gpu_add_tensor};
-pub use matmul::{gpu_matmul, gpu_matmul_tensor};
+pub use matmul::{
+    gpu_matmul, gpu_matmul_tensor, gpu_matmul_tensor_timed, gpu_matmul_tiled,
+    gpu_matmul_tiled_tensor, gpu_matmul_tiled_tensor_timed,
+};
 pub use relu::{gpu_relu, gpu_relu_tensor};

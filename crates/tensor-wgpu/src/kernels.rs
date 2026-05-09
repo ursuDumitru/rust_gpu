@@ -14,6 +14,8 @@ pub(crate) struct KernelCache {
     pub(crate) relu: CachedKernel,
     /// Cached state for row-major 2D matmul.
     pub(crate) matmul: CachedKernel,
+    /// Cached state for row-major 2D tiled matmul.
+    pub(crate) matmul_tiled: CachedKernel,
 }
 
 impl KernelCache {
@@ -43,6 +45,17 @@ impl KernelCache {
                 device,
                 "matmul",
                 include_str!("../shaders/matmul.wgsl"),
+                &[
+                    storage_buffer_entry(0, true),
+                    storage_buffer_entry(1, true),
+                    storage_buffer_entry(2, false),
+                    uniform_buffer_entry(3),
+                ],
+            ),
+            matmul_tiled: CachedKernel::new(
+                device,
+                "matmul tiled",
+                include_str!("../shaders/matmul_tiled.wgsl"),
                 &[
                     storage_buffer_entry(0, true),
                     storage_buffer_entry(1, true),

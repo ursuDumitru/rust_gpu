@@ -12,8 +12,17 @@ pub mod mlp;
 pub mod ops;
 /// GPU-resident tensor buffer type.
 pub mod tensor;
+/// GPU timestamp-query result types.
+pub mod timing;
 
 pub use context::GpuContext;
-pub use mlp::gpu_mlp_forward;
-pub use ops::{gpu_add, gpu_add_tensor, gpu_matmul, gpu_matmul_tensor, gpu_relu, gpu_relu_tensor};
+pub use mlp::{
+    gpu_mlp_forward, gpu_mlp_forward_tensor, gpu_mlp_forward_tiled, gpu_mlp_forward_tiled_tensor,
+};
+pub use ops::{
+    gpu_add, gpu_add_tensor, gpu_matmul, gpu_matmul_tensor, gpu_matmul_tensor_timed,
+    gpu_matmul_tiled, gpu_matmul_tiled_tensor, gpu_matmul_tiled_tensor_timed, gpu_relu,
+    gpu_relu_tensor,
+};
 pub use tensor::GpuTensor;
+pub use timing::GpuKernelTiming;

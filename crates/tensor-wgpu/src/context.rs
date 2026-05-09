@@ -21,6 +21,7 @@ pub struct GpuContext {
     pub queue: wgpu::Queue,
     /// Reusable compute pipelines and bind layouts for tensor kernels.
     pub(crate) kernels: KernelCache,
+    timestamp_queries_supported: bool,
 }
 
 impl GpuContext {
@@ -49,10 +50,18 @@ impl GpuContext {
             );
         }
 
+        let timestamp_queries_supported =
+            adapter.features().contains(wgpu::Features::TIMESTAMP_QUERY);
+        let required_features = if timestamp_queries_supported {
+            wgpu::Features::TIMESTAMP_QUERY
+        } else {
+            wgpu::Features::empty()
+        };
+
         let (device, queue) = adapter
             .request_device(&wgpu::DeviceDescriptor {
                 label: Some("rust_gpu device"),
-                required_features: wgpu::Features::empty(),
+                required_features,
                 required_limits: wgpu::Limits::downlevel_defaults(),
                 experimental_features: wgpu::ExperimentalFeatures::disabled(),
                 memory_hints: wgpu::MemoryHints::Performance,
@@ -69,6 +78,7 @@ impl GpuContext {
             device,
             queue,
             kernels,
+            timestamp_queries_supported,
         })
     }
 
@@ -81,6 +91,11 @@ impl GpuContext {
             .context("failed while waiting for GPU work to finish")?;
 
         Ok(())
+    }
+
+    /// Returns whether this context can record GPU timestamp queries.
+    pub fn timestamp_queries_supported(&self) -> bool {
+        self.timestamp_queries_supported
     }
 }
 
